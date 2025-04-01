@@ -114,3 +114,45 @@ function atualizaMapa(latitude, longitude){
         .bindPopup("📍Você está aqui")
         .openPopup()
 }
+
+async function buscarclima(){
+    const climaElemento = document.getElementById("clima");
+    //Verifica se as coordenadas foram obtidas, se um for null, da erro
+    if (latitude === null || longitude === null){
+        address.innerHTML = "⚠ Primeiro obtenha as coordenadas!";
+        return;
+    }
+
+    //Faz requisição a API
+    try{
+        //Monta a url com as coordenadas obtidas
+        const chave = "b1a56e376518545dfb32e9dbfb439f2d"
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${chave}&units=metric`;
+
+        //chama a API e espera pela resposta
+        const resposta = await fetch(url);
+
+        //Transforma a respostra em JSON
+        const dados = await resposta.json();
+        console.log(dados);
+
+        //extrai as informações de endereço para a variável endereco
+        const clima = dados.main;
+        console.log(clima);
+
+        const Temperatura = clima.temp.toFixed(2);
+
+        //exibe o endereço formatado
+        climaElemento.innerHTML=`<p>
+        <h3>📍 Detalhes do clima:</h3>
+        <a>
+        Temperatura: ${Temperatura}C°<br>
+        </a>
+        </p>
+        `;
+        console.log("Dados do clima recebidos:", clima);
+    } catch (erro) {
+        clima.innerHTML = "❌ Erro ao buscar o clima!";
+        console.error("Erro ao buscar dados:", erro);
+    };
+}
